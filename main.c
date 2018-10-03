@@ -27,7 +27,6 @@ int main(int argc, char *argv[]) {
 
     int debug = 0;
     int counter = 0;
-    int loading = 0;
     ROW rows[400000];
     wchar_t delimeter[] = L"\n";
     wchar_t* keyPat = L"@T";
@@ -41,28 +40,26 @@ int main(int argc, char *argv[]) {
         wcscpy(tmp, line);
         rows[counter].idx = counter;
 
-        if(!loading && wcsstr(tmp, begin)) {
-            loading = 1;
+        if(wcsstr(tmp, begin)) {
             str = wcscat_m(str, wcsstr(tmp, begin));
-        }
 
-        while(loading && fgetws(line, sizeof(line), inFile) != NULL) {
-            size_t newSize = sizeof(wchar_t) * ((int)wcslen(line) + 1);
-            tmp = (wchar_t*)malloc(newSize);
-            wcscpy(tmp, line);
+            while(fgetws(line, sizeof(line), inFile) != NULL) {
+                size_t newSize = sizeof(wchar_t) * ((int)wcslen(line) + 1);
+                tmp = (wchar_t*)malloc(newSize);
+                wcscpy(tmp, line);
 
-            if(wcsstr(tmp, end)) {
-                wchar_t* buffer;
-                str = wcscat_m(str, wcstok(tmp, end, &buffer));
-                loading = 0;
-                rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(str) + 1));
-                wcscpy(rows[counter].data, str);
-                counter++;
-                wcscpy(str, L"");
-                break;
+                if(wcsstr(tmp, end)) {
+                    wchar_t* buffer;
+                    str = wcscat_m(str, wcstok(tmp, end, &buffer));
+                    rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(str) + 1));
+                    wcscpy(rows[counter].data, str);
+                    counter++;
+                    wcscpy(str, L"");
+                    break;
+                }
+
+                str = wcscat_m(str, tmp);
             }
-
-            str = wcscat_m(str, tmp);
         }
     }
 
@@ -79,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     bubble_sort(rows, counter);
     for(int i = 0; i < 20; i++) {
-        printf("%ls\n", rows[i].data);
+        printf("%ls", rows[i].data);
     }
 }
 
