@@ -11,6 +11,7 @@ typedef struct {
 } ROW;
 
 wchar_t* wcscat_m(wchar_t*, wchar_t*);
+void bubble_sort(ROW*, int);
 
 int main(int argc, char *argv[]) {
     if (!setlocale(LC_CTYPE, "")) {
@@ -66,13 +67,19 @@ int main(int argc, char *argv[]) {
     }
 
     for(int i=0; i < counter; i++) {
-        wchar_t* result = wcsstr(rows[i].data, keyPat);
         wchar_t* buffer;
+        wchar_t* data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(rows[i].data) + 1));
+        wcscpy(data, rows[i].data);
+        wchar_t* result = wcsstr(data, keyPat);
         result = wcstok(result, L"\n", &buffer);
         result = wcstok(result, L":", &buffer);
         result = wcstok(NULL, L":", &buffer);
         rows[i].key = (int)*result;
-        printf("%d", rows[i].key);
+    }
+
+    bubble_sort(rows, counter);
+    for(int i = 0; i < 20; i++) {
+        printf("%ls\n", rows[i].data);
     }
 }
 
@@ -87,4 +94,16 @@ wchar_t* wcscat_m(wchar_t* str1, wchar_t* str2) {
     s = realloc(str1, len);
     wcscat(s, str2);
     return s;
+}
+
+void bubble_sort(ROW* array, int n) {
+    for(int i=n-1; i > 0; i--) {
+        for(int j=0; j <= i-1; j++) {
+            if(array[j].key > array[j + 1].key) {
+                ROW temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;
+            }
+        }
+    }
 }
