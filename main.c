@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<locale.h>
 #include<wchar.h>
+#include<string.h>
 #define BUFFER_SIZE 50000
 
 typedef struct {
@@ -13,6 +14,8 @@ typedef struct {
 wchar_t* wcscat_m(wchar_t*, wchar_t*);
 void bubble_sort(ROW*, int);
 void insertion_sort(ROW*, int);
+int get_signs_index(char);
+int hex2dec(char*);
 
 int main(int argc, char *argv[]) {
     if (!setlocale(LC_CTYPE, "")) {
@@ -38,6 +41,7 @@ int main(int argc, char *argv[]) {
         wchar_t* tmp = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(line) + 1));
         wchar_t* str;
         wcscpy(tmp, line);
+        str = wcscat_m(str, tmp);
         rows[counter].idx = counter;
 
         while(fgetws(line, sizeof(line), inFile) != NULL) {
@@ -46,8 +50,6 @@ int main(int argc, char *argv[]) {
             wcscpy(tmp, line);
 
             if(wcsstr(tmp, end)) {
-                wchar_t* buffer;
-                str = wcscat_m(str, wcsstr(tmp, end));
                 rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(str) + 1));
                 wcscpy(rows[counter].data, str);
                 counter++;
@@ -61,16 +63,20 @@ int main(int argc, char *argv[]) {
 
     for(int i=0; i < counter; i++) {
         wchar_t* buffer;
+        char *ptr;
+        char hex[5];
+        long number;
         wchar_t* data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(rows[i].data) + 1));
         wcscpy(data, rows[i].data);
         wchar_t* result = wcsstr(data, keyPat);
         result = wcstok(result, L"\n", &buffer);
         result = wcstok(result, L":", &buffer);
         result = wcstok(NULL, L":", &buffer);
-        rows[i].key = (int)*result;
+        sprintf(hex, "%04x", result[0]);
+        rows[i].key = hex2dec(hex);
     }
 
-    bubble_sort(rows, counter);
+    insertion_sort(rows, counter);
     for(int i = 0; i < 20; i++) {
         printf("%ls", rows[i].data);
     }
@@ -90,10 +96,11 @@ wchar_t* wcscat_m(wchar_t* str1, wchar_t* str2) {
 }
 
 void bubble_sort(ROW* array, int n) {
+    ROW temp;
     for(int i=n-1; i > 0; i--) {
         for(int j=0; j <= i-1; j++) {
             if(array[j].key > array[j + 1].key) {
-                ROW temp = array[j];
+                temp = array[j];
                 array[j] = array[j + 1];
                 array[j + 1] = temp;
             }
@@ -102,12 +109,47 @@ void bubble_sort(ROW* array, int n) {
 }
 
 void insertion_sort(ROW* array, int n) {
+    ROW temp;
+    int j;
     for(int i=1; i<n; i++) {
-        ROW temp = array[i];
-        int j = i-1;
-        while(temp.data > array[j].data && j >= 0) {
+        temp = array[i];
+        j = i-1;
+
+        while(j>=0 && array[j].key > temp.key) {
             array[j+1] = array[j];
             j--;
         }
+
+        array[j+1] = temp;
     }
+}
+
+int hex2dec(char* src) {
+    int sum = 0;
+    int t = 1;
+    int i, len;
+    
+    len = strlen(src);
+    for(i = len-1; i>=0; i--) {
+        sum += t * get_signs_index(*(src + i));
+        t *= 16;
+    }
+
+    return sum;
+}
+
+int get_signs_index(char ch) {
+    if(ch >= '0' && ch <= '9') {
+        return ch - '0';
+    }
+
+    if(ch >= 'A' && ch <='F') {
+        return ch - 'A' + 10;
+    }
+
+    if(ch >= 'a' && ch <='f') {
+        return ch - 'a' + 10;
+    }
+
+    return -1;
 }
