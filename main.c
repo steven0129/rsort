@@ -12,6 +12,7 @@ typedef struct {
 
 wchar_t* wcscat_m(wchar_t*, wchar_t*);
 void bubble_sort(ROW*, int);
+void insertion_sort(ROW*, int);
 
 int main(int argc, char *argv[]) {
     if (!setlocale(LC_CTYPE, "")) {
@@ -30,7 +31,6 @@ int main(int argc, char *argv[]) {
     ROW rows[400000];
     wchar_t delimeter[] = L"\n";
     wchar_t* keyPat = L"@T";
-    wchar_t* begin = L"@GAISRec:";
     wchar_t* end = L"@GAISRec:";
     wchar_t line[BUFFER_SIZE];
 
@@ -40,26 +40,22 @@ int main(int argc, char *argv[]) {
         wcscpy(tmp, line);
         rows[counter].idx = counter;
 
-        if(wcsstr(tmp, begin)) {
-            str = wcscat_m(str, wcsstr(tmp, begin));
+        while(fgetws(line, sizeof(line), inFile) != NULL) {
+            size_t newSize = sizeof(wchar_t) * ((int)wcslen(line) + 1);
+            tmp = (wchar_t*)malloc(newSize);
+            wcscpy(tmp, line);
 
-            while(fgetws(line, sizeof(line), inFile) != NULL) {
-                size_t newSize = sizeof(wchar_t) * ((int)wcslen(line) + 1);
-                tmp = (wchar_t*)malloc(newSize);
-                wcscpy(tmp, line);
-
-                if(wcsstr(tmp, end)) {
-                    wchar_t* buffer;
-                    str = wcscat_m(str, wcstok(tmp, end, &buffer));
-                    rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(str) + 1));
-                    wcscpy(rows[counter].data, str);
-                    counter++;
-                    wcscpy(str, L"");
-                    break;
-                }
-
-                str = wcscat_m(str, tmp);
+            if(wcsstr(tmp, end)) {
+                wchar_t* buffer;
+                str = wcscat_m(str, wcsstr(tmp, end));
+                rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(str) + 1));
+                wcscpy(rows[counter].data, str);
+                counter++;
+                wcscpy(str, L"");
+                break;
             }
+
+            str = wcscat_m(str, tmp);
         }
     }
 
@@ -101,6 +97,17 @@ void bubble_sort(ROW* array, int n) {
                 array[j] = array[j + 1];
                 array[j + 1] = temp;
             }
+        }
+    }
+}
+
+void insertion_sort(ROW* array, int n) {
+    for(int i=1; i<n; i++) {
+        ROW temp = array[i];
+        int j = i-1;
+        while(temp.data > array[j].data && j >= 0) {
+            array[j+1] = array[j];
+            j--;
         }
     }
 }
