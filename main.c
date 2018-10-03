@@ -19,7 +19,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    FILE* inFile = fopen("./ettoday.txt", "r");
+    FILE* inFile = fopen(argv[argc - 1], "r");
+    if(inFile == NULL) {
+        printf("No such file or could not open it.\n");
+        exit(1);
+    }
     int debug = 0;
     int counter = 0;
     int loading = 0;
@@ -68,7 +72,7 @@ int main(int argc, char *argv[]) {
         result = wcstok(result, L":", &buffer);
         result = wcstok(NULL, L":", &buffer);
         rows[i].key = (int)*result;
-        printf("%d\n",rows[i].key);
+        printf("%d", rows[i].key);
     }
 }
 
