@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     }
 
     insertion_sort(rows, counter);
-    for(int i = 0; i < 20; i++) {
+    for(int i = 0; i < counter; i++) {
         printf("%ls", rows[i].data);
     }
 }
