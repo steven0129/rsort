@@ -6,6 +6,7 @@
 
 typedef struct {
     int idx;
+    int key;
     wchar_t* data;
 } ROW;
 
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]) {
 
         if(!loading && wcsstr(tmp, begin)) {
             loading = 1;
-            str = wcscat_m(str, tmp);
+            str = wcscat_m(str, wcsstr(tmp, begin));
         }
 
         while(loading && fgetws(line, sizeof(line), inFile) != NULL) {
@@ -46,6 +47,8 @@ int main(int argc, char *argv[]) {
             wcscpy(tmp, line);
 
             if(wcsstr(tmp, end)) {
+                wchar_t* buffer;
+                str = wcscat_m(str, wcstok(tmp, end, &buffer));
                 loading = 0;
                 rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(str) + 1));
                 wcscpy(rows[counter].data, str);
@@ -59,7 +62,13 @@ int main(int argc, char *argv[]) {
     }
 
     for(int i=0; i < counter; i++) {
-        printf("%ls\n-----------------------\n", rows[i].data);
+        wchar_t* result = wcsstr(rows[i].data, keyPat);
+        wchar_t* buffer;
+        result = wcstok(result, L"\n", &buffer);
+        result = wcstok(result, L":", &buffer);
+        result = wcstok(NULL, L":", &buffer);
+        rows[i].key = (int)*result;
+        printf("%d\n",rows[i].key);
     }
 }
 
