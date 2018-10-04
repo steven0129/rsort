@@ -14,6 +14,7 @@ typedef struct {
 wchar_t* wcscat_m(wchar_t*, wchar_t*);
 void bubble_sort(ROW*, int);
 void insertion_sort(ROW*, int);
+void selection_sort(ROW*, int);
 int get_signs_index(char);
 int hex2dec(char*);
 
@@ -81,7 +82,7 @@ int main(int argc, char *argv[]) {
         rows[i].key = hex2dec(hex);
     }
 
-    insertion_sort(rows, counter);
+    selection_sort(rows, counter);
     for(int i = 0; i < counter; i++) {
         printf("%ls", rows[i].data);
     }
@@ -126,6 +127,20 @@ void insertion_sort(ROW* array, int n) {
         }
 
         array[j+1] = temp;
+    }
+}
+
+void selection_sort(ROW* array, int n) {
+    ROW temp;
+    for(int i=0; i<n-1; i++) {
+        int min = i;
+        for(int j=i+1; j<n; j++) 
+            if(array[j].key < array[min].key)
+                min = j;
+
+        temp = array[i];
+        array[i] = array[min];
+        array[min] = temp;
     }
 }
 
