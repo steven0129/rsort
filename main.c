@@ -23,12 +23,18 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    FILE* inFile = fopen(argv[argc - 1], "r");
+    FILE* inFile;
+    if(argc > 1) {
+        inFile = fopen(argv[argc - 1], "r");
+    } else {
+        inFile = stdin;
+    }
+
     if(inFile == NULL) {
         printf("No such file or could not open it.\n");
         exit(1);
     }
-
+    
     int debug = 0;
     int counter = 0;
     ROW rows[400000];
@@ -65,7 +71,6 @@ int main(int argc, char *argv[]) {
         wchar_t* buffer;
         char *ptr;
         char hex[5];
-        long number;
         wchar_t* data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(rows[i].data) + 1));
         wcscpy(data, rows[i].data);
         wchar_t* result = wcsstr(data, keyPat);
