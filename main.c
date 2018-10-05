@@ -72,6 +72,8 @@ int main(int argc, char *argv[]) {
 
             str = wcscat_m(str, tmp);
         }
+
+        free(tmp);
     }
 
     for(int i=0; i < counter; i++) {
