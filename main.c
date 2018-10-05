@@ -78,9 +78,7 @@ wchar_t* wcscat_m(wchar_t* str1, wchar_t* str2) {
     int len = 0;
     wchar_t* s;
 
-    if(str1 != NULL)
-        len = sizeof(wchar_t) * ((int)wcslen(str1) + 1);
-
+    if(str1 != NULL) len = sizeof(wchar_t) * ((int)wcslen(str1) + 1);
     len += sizeof(wchar_t) * ((int)wcslen(str2) + 1);
     s = realloc(str1, len);
     wcscat(s, str2);
