@@ -15,6 +15,12 @@ wchar_t* wcscat_m(wchar_t*, wchar_t*);
 void bubble_sort(ROW*, int);
 void insertion_sort(ROW*, int);
 void selection_sort(ROW*, int);
+void merge_sort(ROW*, int, int);
+void merge(ROW*, int, int, int);
+void heap_sort(ROW*, int);
+void heapify(ROW*, int, int);
+int partition (ROW*, int, int);
+void quick_sort(ROW*, int, int);
 int get_signs_index(char);
 int hex2dec(char*);
 
@@ -82,7 +88,7 @@ int main(int argc, char *argv[]) {
         rows[i].key = hex2dec(hex);
     }
 
-    selection_sort(rows, counter);
+    quick_sort(rows, 0, counter - 1);
     for(int i = 0; i < counter; i++) {
         printf("%ls", rows[i].data);
     }
@@ -142,6 +148,130 @@ void selection_sort(ROW* array, int n) {
         array[i] = array[min];
         array[min] = temp;
     }
+}
+
+void merge_sort(ROW* array, int i, int j) {
+    int mid;
+    if(i<j) {
+        mid = (i + j)/2;
+        merge_sort(array, i, mid);
+        merge_sort(array, mid+1, j);
+        merge(array, i, mid, j);
+    }
+}
+
+void merge(ROW* arr, int l, int m, int r) {
+    int i, j, k; 
+    int n1 = m - l + 1; 
+    int n2 =  r - m; 
+  
+    ROW L[n1], R[n2]; 
+
+    for (i = 0; i < n1; i++) 
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++) 
+        R[j] = arr[m + 1 + j]; 
+  
+    i = 0; // Initial index of first subarray 
+    j = 0; // Initial index of second subarray 
+    k = l; // Initial index of merged subarray 
+    while (i < n1 && j < n2) 
+    { 
+        if (L[i].key <= R[j].key) 
+        { 
+            arr[k] = L[i]; 
+            i++; 
+        } 
+        else
+        { 
+            arr[k] = R[j]; 
+            j++; 
+        } 
+        k++; 
+    } 
+  
+    while (i < n1) 
+    { 
+        arr[k] = L[i]; 
+        i++; 
+        k++; 
+    } 
+  
+    while (j < n2) 
+    { 
+        arr[k] = R[j]; 
+        j++; 
+        k++; 
+    } 
+}
+
+void heap_sort(ROW* arr, int n) { 
+    // Build heap (rearrange array) 
+    for (int i = n / 2 - 1; i >= 0; i--) 
+        heapify(arr, n, i); 
+  
+    // One by one extract an element from heap 
+    for (int i=n-1; i>=0; i--) 
+    { 
+        // Move current root to end
+        ROW temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+  
+        // call max heapify on the reduced heap 
+        heapify(arr, i, 0); 
+    } 
+}
+
+void heapify(ROW* arr, int n, int i) { 
+    int largest = i; // Initialize largest as root 
+    int l = 2*i + 1; // left = 2*i + 1 
+    int r = 2*i + 2; // right = 2*i + 2 
+  
+    // If left child is larger than root 
+    if (l < n && arr[l].key > arr[largest].key) 
+        largest = l; 
+  
+    // If right child is larger than largest so far 
+    if (r < n && arr[r].key > arr[largest].key) 
+        largest = r; 
+  
+    // If largest is not root 
+    if (largest != i) 
+    { 
+        ROW temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+  
+        // Recursively heapify the affected sub-tree 
+        heapify(arr, n, largest); 
+    } 
+}
+
+void quick_sort(ROW* arr, int low, int high) { 
+    if (low < high) { 
+        int pi = partition(arr, low, high); 
+        quick_sort(arr, low, pi - 1);
+        quick_sort(arr, pi + 1, high);
+    }
+} 
+
+int partition (ROW* arr, int low, int high) { 
+    int i = (low - 1);  // Index of smaller element 
+  
+    for (int j = low; j <= high- 1; j++) { 
+        if (arr[j].key <= arr[high].key) { 
+            i++;    // increment index of smaller element 
+            ROW temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+
+    ROW temp = arr[i+1];
+    arr[i+1] = arr[high];
+    arr[high] = temp; 
+    return (i + 1); 
 }
 
 int hex2dec(char* src) {
