@@ -11,7 +11,7 @@
 #include"heap_sort.h"
 #include"quick_sort.h"
 #include"type.h"
-#define BUFFER_SIZE 20000
+#define BUFFER_SIZE 50000
 #define __wcscasecmp wcscasecmp
 #define TOLOWER(Ch) towlower (Ch)
 
@@ -40,7 +40,8 @@ int main(int argc, char *argv[]) {
     int case_insensitive = 0;
     char* algorithm = "bubble_sort";
     char hex[5];
-    ROW rows[500000];
+    ROW* rows;
+    rows = malloc(sizeof(ROW) * 540000);
     wchar_t delimeter[] = L"\n";
     wchar_t* keyPat = L"@T";
     wchar_t* begin = L"@N";
@@ -80,25 +81,20 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    while(fgetws(line, sizeof(line), inFile) != NULL) {
-        buffer = wcscat_m(buffer, line);
-
-        while(fgetws(line, sizeof(line), inFile) != NULL) {
-            if(wcsstr(line, end)) {
-                *(wcsstr(line, end) + wcslen(end)) = L'\0';
-                buffer = wcscat_m(buffer, wcsstr(line, end));
-                if(wcsstr(buffer, begin)) wcscpy(buffer, wcsstr(buffer, begin));
-                rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(buffer) + 1));
-                wcscpy(rows[counter].data, buffer);
-                counter++;
-                wcscpy(buffer, L"");
-                break;
-            }
-
+    while(fgetws(line, BUFFER_SIZE, inFile) != NULL) {
+        if(wcsstr(line, end)) {
+            *(wcsstr(line, end) + wcslen(end)) = L'\0';
+            buffer = wcscat_m(buffer, wcsstr(line, end));
+            if(wcsstr(buffer, begin)) wcscpy(buffer, wcsstr(buffer, begin));
+            rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(buffer) + 1));
+            wcscpy(rows[counter].data, buffer);
+            counter++;
+            wcscpy(buffer, L"");
+        } else {
             buffer = wcscat_m(buffer, line);
         }
 
-        // printf("輸入第%d行\n", counter);
+        printf("正輸入第%d筆資料\n", counter);
     }
 
     for(int i=0; i < counter; i++) {
