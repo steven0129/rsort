@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
     int reverse = 0;
     int numerical = 0;
     int case_insensitive = 0;
+    char* algorithm = "merge_sort";
     char hex[5];
     ROW rows[400000];
     wchar_t delimeter[] = L"\n";
@@ -72,6 +73,10 @@ int main(int argc, char *argv[]) {
             wcscpy(keyPat, L"@N");
         } else if(strcmp(argv[i], "-c") == 0) {
             case_insensitive = 1;
+        } else if(strcmp(argv[i], "-a") == 0) {
+            i++;
+            algorithm = malloc(sizeof(char) * (strlen(argv[i] + 1)));
+            strcpy(algorithm, argv[i]);
         }
     }
 
@@ -111,8 +116,14 @@ int main(int argc, char *argv[]) {
             rows[i].key = hex2dec(hex);
         }
     }
+    
+    if(strcmp(algorithm, "bubble_sort") == 0) bubble_sort(rows, counter, reverse);
+    else if(strcmp(algorithm, "insertion_sort") == 0) insertion_sort(rows, counter, reverse);
+    else if(strcmp(algorithm, "selection_sort") == 0) selection_sort(rows, counter, reverse);
+    else if(strcmp(algorithm, "merge_sort") == 0) merge_sort(rows, 0, counter - 1, reverse);
+    else if(strcmp(algorithm, "heap_sort") == 0) heap_sort(rows, counter, reverse);
+    else if(strcmp(algorithm, "quick_sort") == 0) quick_sort(rows, 0, counter - 1, reverse);
 
-    quick_sort(rows, 0, counter - 1, reverse);
     for(int i = 0; i < counter; i++) {
         printf("%ls", rows[i].data);
     }
