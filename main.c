@@ -11,9 +11,9 @@
 #include"heap_sort.h"
 #include"quick_sort.h"
 #include"type.h"
-#define BUFFER_SIZE 50000
-# define __wcscasecmp wcscasecmp
-# define TOLOWER(Ch) towlower (Ch)
+#define BUFFER_SIZE 20000
+#define __wcscasecmp wcscasecmp
+#define TOLOWER(Ch) towlower (Ch)
 
 wchar_t* wcscat_m(wchar_t*, wchar_t*);
 
@@ -38,16 +38,16 @@ int main(int argc, char *argv[]) {
     int reverse = 0;
     int numerical = 0;
     int case_insensitive = 0;
-    char* algorithm = "merge_sort";
+    char* algorithm = "bubble_sort";
     char hex[5];
-    ROW rows[400000];
+    ROW rows[500000];
     wchar_t delimeter[] = L"\n";
     wchar_t* keyPat = L"@T";
     wchar_t* begin = L"@N";
     wchar_t* end = L"@GAISRec:\n";
     wchar_t line[BUFFER_SIZE];
     wchar_t* buffer;
-    wchar_t argument[100];
+    wchar_t argument[50];
 
     for(int i=1; i<argc; i++) {
         if(strcmp(argv[i], "-drl") == 0) {
@@ -82,7 +82,6 @@ int main(int argc, char *argv[]) {
 
     while(fgetws(line, sizeof(line), inFile) != NULL) {
         buffer = wcscat_m(buffer, line);
-        rows[counter].idx = counter;
 
         while(fgetws(line, sizeof(line), inFile) != NULL) {
             if(wcsstr(line, end)) {
@@ -98,6 +97,8 @@ int main(int argc, char *argv[]) {
 
             buffer = wcscat_m(buffer, line);
         }
+
+        // printf("輸入第%d行\n", counter);
     }
 
     for(int i=0; i < counter; i++) {
