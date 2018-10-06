@@ -2,13 +2,13 @@
 #define HEAP_SORT_H
 #include"type.h"
 
-void heap_sort(ROW*, int);
-void heapify(ROW*, int, int);
+void heap_sort(ROW*, int, int);
+void heapify(ROW*, int, int, int);
 
-void heap_sort(ROW* arr, int n) { 
+void heap_sort(ROW* arr, int n, int reverse) { 
     // Build heap (rearrange array) 
     for (int i = n / 2 - 1; i >= 0; i--) 
-        heapify(arr, n, i); 
+        heapify(arr, n, i, reverse); 
   
     // One by one extract an element from heap 
     for (int i=n-1; i>=0; i--) 
@@ -19,22 +19,29 @@ void heap_sort(ROW* arr, int n) {
         arr[i] = temp;
   
         // call max heapify on the reduced heap 
-        heapify(arr, i, 0); 
+        heapify(arr, i, 0, reverse); 
     } 
 }
 
-void heapify(ROW* arr, int n, int i) { 
+void heapify(ROW* arr, int n, int i, int reverse) { 
     int largest = i; // Initialize largest as root 
     int l = 2*i + 1; // left = 2*i + 1 
     int r = 2*i + 2; // right = 2*i + 2 
   
-    // If left child is larger than root 
-    if (l < n && arr[l].key > arr[largest].key) 
-        largest = l; 
-  
-    // If right child is larger than largest so far 
-    if (r < n && arr[r].key > arr[largest].key) 
-        largest = r; 
+    if(reverse) {
+        if (l < n && arr[l].key < arr[largest].key) 
+            largest = l; 
+    
+        if (r < n && arr[r].key < arr[largest].key) 
+            largest = r; 
+    } else {
+        if (l < n && arr[l].key > arr[largest].key) 
+            largest = l; 
+    
+        if (r < n && arr[r].key > arr[largest].key) 
+            largest = r; 
+    }
+    
   
     // If largest is not root 
     if (largest != i) 
@@ -44,7 +51,7 @@ void heapify(ROW* arr, int n, int i) {
         arr[largest] = temp;
   
         // Recursively heapify the affected sub-tree 
-        heapify(arr, n, largest); 
+        heapify(arr, n, largest, reverse); 
     } 
 }
 

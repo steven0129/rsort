@@ -1,20 +1,20 @@
 #ifndef MERGE_SORT_H
 #define MERGE_SORT_H
 #include"type.h"
-void merge_sort(ROW*, int, int);
-void merge(ROW*, int, int, int);
+void merge_sort(ROW*, int, int, int);
+void merge(ROW*, int, int, int, int);
 
-void merge_sort(ROW* array, int left, int right) {
+void merge_sort(ROW* array, int left, int right, int reverse) {
     int mid;
     if(left<right) {
         mid = (left + right)/2;
-        merge_sort(array, left, mid);
-        merge_sort(array, mid+1, left);
-        merge(array, left, mid, right);
+        merge_sort(array, left, mid, reverse);
+        merge_sort(array, mid+1, left, reverse);
+        merge(array, left, mid, right, reverse);
     }
 }
 
-void merge(ROW* arr, int l, int m, int r) {
+void merge(ROW* arr, int l, int m, int r, int reverse) {
     int i, j, k; 
     int n1 = m - l + 1; 
     int n2 =  r - m; 
@@ -30,17 +30,31 @@ void merge(ROW* arr, int l, int m, int r) {
     j = 0; // Initial index of second subarray 
     k = l; // Initial index of merged subarray 
     while (i < n1 && j < n2) 
-    { 
-        if (L[i].key <= R[j].key) 
-        { 
-            arr[k] = L[i]; 
-            i++; 
-        } 
-        else
-        { 
-            arr[k] = R[j]; 
-            j++; 
-        } 
+    {
+        if(reverse) {
+            if (L[i].key >= R[j].key) 
+            { 
+                arr[k] = L[i]; 
+                i++; 
+            } 
+            else
+            { 
+                arr[k] = R[j]; 
+                j++; 
+            }
+        } else {
+            if (L[i].key <= R[j].key) 
+            { 
+                arr[k] = L[i]; 
+                i++; 
+            } 
+            else
+            { 
+                arr[k] = R[j]; 
+                j++; 
+            } 
+        }
+        
         k++; 
     } 
   
