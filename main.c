@@ -93,8 +93,6 @@ int main(int argc, char *argv[]) {
         } else {
             buffer = wcscat_m(buffer, line);
         }
-
-        printf("正輸入第%d筆資料\n", counter);
     }
 
     for(int i=0; i < counter; i++) {

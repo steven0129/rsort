@@ -2,4 +2,5 @@
 *.rec
 *.py
 *.out
-*.data
+perf.data*
+*.log

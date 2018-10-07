@@ -7,9 +7,9 @@ void merge(ROW*, int, int, int, int);
 void merge_sort(ROW* array, int left, int right, int reverse) {
     int mid;
     if(left<right) {
-        mid = (left + right)/2;
+        mid = left + (right - left)/2;
         merge_sort(array, left, mid, reverse);
-        merge_sort(array, mid+1, left, reverse);
+        merge_sort(array, mid+1, right, reverse);
         merge(array, left, mid, right, reverse);
     }
 }
@@ -19,7 +19,8 @@ void merge(ROW* arr, int l, int m, int r, int reverse) {
     int n1 = m - l + 1; 
     int n2 =  r - m; 
   
-    ROW L[n1], R[n2]; 
+    ROW* L = malloc(sizeof(ROW) * n1);
+    ROW* R = malloc(sizeof(ROW) * n2); 
 
     for (i = 0; i < n1; i++) 
         L[i] = arr[l + i];
