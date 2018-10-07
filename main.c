@@ -3,14 +3,15 @@
 #include<locale.h>
 #include<wchar.h>
 #include<wctype.h>
-#include"number.h"
-#include"bubble_sort.h"
-#include"insertion_sort.h"
-#include"selection_sort.h"
-#include"merge_sort.h"
-#include"heap_sort.h"
-#include"quick_sort.h"
-#include"type.h"
+#include"utils/number.h"
+#include"sorting/type.h"
+#include"sorting/bubble_sort.h"
+#include"sorting/insertion_sort.h"
+#include"sorting/selection_sort.h"
+#include"sorting/merge_sort.h"
+#include"sorting/heap_sort.h"
+#include"sorting/quick_sort.h"
+
 #define BUFFER_SIZE 50000
 #define __wcscasecmp wcscasecmp
 #define TOLOWER(Ch) towlower (Ch)
