@@ -12,7 +12,7 @@
 #include"sorting/heap_sort.h"
 #include"sorting/quick_sort.h"
 
-#define BUFFER_SIZE 50000
+#define BUFFER_SIZE 40000
 #define __wcscasecmp wcscasecmp
 #define TOLOWER(Ch) towlower (Ch)
 
@@ -42,11 +42,11 @@ int main(int argc, char *argv[]) {
     char* algorithm = "bubble_sort";
     char hex[5];
     ROW* rows;
-    rows = malloc(sizeof(ROW) * 540000);
+    rows = malloc(sizeof(ROW) * 10000000);
     wchar_t delimeter[] = L"\n";
-    wchar_t* keyPat = L"@T";
-    wchar_t* begin = L"@N";
-    wchar_t* end = L"@GAISRec:\n";
+    wchar_t* keyPat = L"@title";
+    wchar_t* begin = L"@url";
+    wchar_t* end = L"@\n";
     wchar_t line[BUFFER_SIZE];
     wchar_t* buffer;
     wchar_t argument[50];
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
             *(wcsstr(line, end) + wcslen(end)) = L'\0';
             buffer = wcscat_m(buffer, wcsstr(line, end));
             if(wcsstr(buffer, begin)) wcscpy(buffer, wcsstr(buffer, begin));
-            rows[counter].data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(buffer) + 1));
+						rows[counter].data = malloc(sizeof(wchar_t) * ((int)wcslen(buffer) + 1));
             wcscpy(rows[counter].data, buffer);
             counter++;
             wcscpy(buffer, L"");
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     }
 
     for(int i=0; i < counter; i++) {
-        wchar_t* data = (wchar_t*)malloc(sizeof(wchar_t) * ((int)wcslen(rows[i].data) + 1));
+        wchar_t* data = malloc(sizeof(wchar_t) * ((int)wcslen(rows[i].data) + 1));
         wcscpy(data, rows[i].data);
         data = wcsstr(data, keyPat);
         data = wcstok(data, L"\n", &buffer);
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
         if(numerical) {
             rows[i].key = wcstol(data, &buffer, 10);
         } else {
-            if(case_insensitive) sprintf(hex, "%04x", TOLOWER(data[0]));
+						if(case_insensitive) sprintf(hex, "%04x", TOLOWER(data[0]));
             else sprintf(hex, "%04x", data[0]);
             rows[i].key = hex2dec(hex);
         }

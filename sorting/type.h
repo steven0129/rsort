@@ -2,7 +2,7 @@
 #define TYPE_H
 
 typedef struct {
-    int key;
+    unsigned int key;
     wchar_t* data;
 } ROW;
 
