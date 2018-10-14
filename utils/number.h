@@ -3,10 +3,10 @@
 #include<string.h>
 
 int get_signs_index(char);
-int hex2dec(char*);
+unsigned int hex2dec(char*);
 
-int hex2dec(char* src) {
-    int sum = 0;
+unsigned int hex2dec(char* src) {
+    unsigned int sum = 0;
     int t = 1;
     int i, len;
     

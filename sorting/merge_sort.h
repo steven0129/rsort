@@ -1,8 +1,10 @@
 #ifndef MERGE_SORT_H
 #define MERGE_SORT_H
+#include<wchar.h>
 #include"type.h"
 void merge_sort(ROW*, int, int, int);
 void merge(ROW*, int, int, int, int);
+void external_merge_sort(FILE*, FILE*, int);
 
 void merge_sort(ROW* array, int left, int right, int reverse) {
     int mid;
@@ -71,7 +73,10 @@ void merge(ROW* arr, int l, int m, int r, int reverse) {
         arr[k] = R[j]; 
         j++; 
         k++; 
-    } 
+    }
+
+    free(L);
+    free(R);
 }
 
 #endif
