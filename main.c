@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(strcmp(algorithm, "external_merge_sort") == 0) {
-        int partition_size = 2000000, more_input = 1, next = 0;
+        int partition_size = 3000000, more_input = 1, next = 0;
         FILE* outFile = fopen(strcat(argv[argc - 1], ".out"), "w");
         char fileName[7];
         int counter=0;
@@ -101,6 +101,16 @@ int main(int argc, char *argv[]) {
                         if(wcsstr(buffer, keyPat) != NULL) {
                             rows[i].data = malloc(sizeof(wchar_t) * ((int)wcslen(buffer) + 1));
                             wcscpy(rows[i].data, buffer);
+
+                            if(numerical) {
+                                // rows[i].key = wcstol(data, &buffer, 10);
+                            } else {
+                                if(case_insensitive) sprintf(hex, "%04x", TOLOWER(wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]));
+                                else sprintf(hex, "%04x", wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]);
+                                rows[i].key = hex2dec(hex);
+                            }
+                        } else {
+                            rows[i].key = 0;
                         }
 
                         wcscpy(buffer, L"");
