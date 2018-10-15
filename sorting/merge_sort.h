@@ -4,7 +4,7 @@
 #include"type.h"
 void merge_sort(ROW*, int, int, int);
 void merge(ROW*, int, int, int, int);
-void external_merge_sort(FILE*, FILE*, int);
+void mergeFiles(FILE*, int, int);
 
 void merge_sort(ROW* array, int left, int right, int reverse) {
     int mid;
@@ -77,6 +77,10 @@ void merge(ROW* arr, int l, int m, int r, int reverse) {
 
     free(L);
     free(R);
+}
+
+void mergeFiles(FILE* outFile, int partition_size, int k_ways) {
+    
 }
 
 #endif

@@ -18,6 +18,7 @@
 
 wchar_t* wcscat_m(wchar_t*, wchar_t*);
 
+
 int main(int argc, char *argv[]) {
     if (!setlocale(LC_CTYPE, "")) {
         fprintf(stderr, "Error:Please check LANG, LC_CTYPE, LC_ALL.\n");
@@ -25,15 +26,18 @@ int main(int argc, char *argv[]) {
     }
 
     FILE* inFile;
+    FILE* outFile;
     if(argc > 1)
         inFile = fopen(argv[argc - 1], "r");
     else
         inFile = stdin;
-
+    
     if(!inFile) {
         printf("No such file or could not open it.\n");
         exit(1);
     }
+
+    outFile = fopen(strcat(argv[argc - 1], ".out"), "w");
     
     int counter = 0;
     int reverse = 0;
@@ -110,7 +114,7 @@ int main(int argc, char *argv[]) {
                                 rows[i].key = hex2dec(hex);
                             }
                         } else {
-                            rows[i].key = 0;
+                            rows[i].key = -1;
                         }
 
                         wcscpy(buffer, L"");
@@ -128,14 +132,20 @@ int main(int argc, char *argv[]) {
 
             merge_sort(rows, 0, i - 1, reverse);
 
-            for(int i=0; i<partition_size; i++) {
-                free(rows[i].data);
-                rows[i].data = malloc(sizeof(ROW) * 2);
-                wcscpy(rows[i].data, L"");
+            FILE* tmp = fopen(fileName, "w");
+            for(int j=0; j<i; j++) {
+                sprintf(fileName, "%d.tmp", counter);
+                if(rows[j].key != -1) fprintf(tmp, "%ls", rows[j].data);
+                free(rows[j].data);
+                rows[j].data = malloc(sizeof(ROW) * 2);
+                wcscpy(rows[j].data, L"");
             }
 
-            printf("%d\n", counter++);
+            fclose(tmp);
+            counter++;
         }
+
+
     } else {
         rows = malloc(sizeof(ROW) * 100000);
         while(fgetws(line, BUFFER_SIZE, inFile) != NULL) {
