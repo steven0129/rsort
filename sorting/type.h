@@ -3,6 +3,7 @@
 
 typedef struct {
     int key;
+    int fileNum;
     wchar_t* data;
 } ROW;
 

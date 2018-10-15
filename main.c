@@ -3,6 +3,7 @@
 #include<locale.h>
 #include<wchar.h>
 #include<wctype.h>
+#include<limits.h>
 #include"utils/number.h"
 #include"sorting/type.h"
 #include"sorting/bubble_sort.h"
@@ -11,6 +12,7 @@
 #include"sorting/merge_sort.h"
 #include"sorting/heap_sort.h"
 #include"sorting/quick_sort.h"
+#include"sorting/heap.h"
 
 #define BUFFER_SIZE 3000
 #define __wcscasecmp wcscasecmp
@@ -26,6 +28,7 @@ int main(int argc, char *argv[]) {
     }
 
     FILE* inFile;
+    FILE* outFile;
     if(argc > 1)
         inFile = fopen(argv[argc - 1], "r");
     else
@@ -36,11 +39,14 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    
+    outFile = fopen(strcat(argv[argc - 1], ".out"), "w");
+    fclose(outFile);
+    outFile = fopen(argv[argc - 1], "a");
     int counter = 0;
     int reverse = 0;
     int numerical = 0;
     int case_insensitive = 0;
+    int size_order = 0;
     char* algorithm = "bubble_sort";
     char hex[5];
     ROW* rows;
@@ -81,6 +87,8 @@ int main(int argc, char *argv[]) {
             i++;
             algorithm = malloc(sizeof(char) * (strlen(argv[i] + 1)));
             strcpy(algorithm, argv[i]);
+        } else if(strcmp(argv[i], "-s") == 0) {
+            size_order = 1;
         }
     }
 
@@ -103,13 +111,18 @@ int main(int argc, char *argv[]) {
                             rows[i].data = malloc(sizeof(wchar_t) * ((int)wcslen(buffer) + 1));
                             wcscpy(rows[i].data, buffer);
 
-                            if(numerical) {
-                                // rows[i].key = wcstol(data, &buffer, 10);
+                            if(size_order == 1) {
+                                rows[i].key = wcslen(buffer);
                             } else {
-                                if(case_insensitive) sprintf(hex, "%04x", TOLOWER(wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]));
-                                else sprintf(hex, "%04x", wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]);
-                                rows[i].key = hex2dec(hex);
+                                if(numerical) {
+                                    rows[i].key = wcstol(data, &buffer, 10);
+                                } else {
+                                    if(case_insensitive) sprintf(hex, "%04x", TOLOWER(wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]));
+                                    else sprintf(hex, "%04x", wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]);
+                                    rows[i].key = hex2dec(hex);
+                                }
                             }
+                            
                         } else {
                             rows[i].key = -1;
                         }
@@ -142,7 +155,101 @@ int main(int argc, char *argv[]) {
             counter++;
         }
 
+        counter--;
+        free(rows);
+
+        FILE** in = malloc(sizeof(FILE*) * (counter + 1));
+        ROW* arr = malloc(sizeof(ROW) * (counter + 1));
+        for(int i=0; i<counter; i++) {
+            printf("%d, %s", i, fileName);
+            sprintf(fileName, "%d.tmp", i);
+            in[i] = fopen(fileName, "r");
+            while(fgetws(line, BUFFER_SIZE, in[i]) != NULL) {
+                if(wcsstr(line, end)) {
+                    *(wcsstr(line, end) + wcslen(end)) = L'\0';
+                    buffer = wcscat_m(buffer, wcsstr(line, end));
+                    if(wcsstr(buffer, begin)) wcscpy(buffer, wcsstr(buffer, begin));
+                    if(wcsstr(buffer, keyPat) != NULL) {
+                        arr[i].data = malloc(sizeof(wchar_t) * ((int)wcslen(buffer) + 1));
+                        wcscpy(arr[i].data, buffer);
+                        arr[i].fileNum = i;
+
+                        if(numerical) {
+                            arr[i].key = wcstol(data, &buffer, 10);
+                        } else {
+                            if(case_insensitive) sprintf(hex, "%04x", TOLOWER(wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]));
+                            else sprintf(hex, "%04x", wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]);
+                            arr[i].key = hex2dec(hex);
+                        }
+                    }
+
+                    wcscpy(buffer, L"");
+                    break;
+                } else {
+                    buffer = wcscat_m(buffer, line);
+                }
+            }
+        }
+
+        Init();
+        int n = counter;
+        int k = 2;
         
+        for(int i=0; i<counter; i++) {
+            Insert(arr[i]);
+        }
+
+        while(1) {
+            ROW min = DeleteMin(), tmp;
+            fprintf(outFile, "%ls", min.data);
+            int end_of_file = 1;
+
+            while(fgetws(line, BUFFER_SIZE, in[min.fileNum]) != NULL) {
+                end_of_file = 0;
+                if(wcsstr(line, end)) {
+                    *(wcsstr(line, end) + wcslen(end)) = L'\0';
+                    buffer = wcscat_m(buffer, wcsstr(line, end));
+                    if(wcsstr(buffer, begin)) wcscpy(buffer, wcsstr(buffer, begin));
+                    if(wcsstr(buffer, keyPat) != NULL) {
+                        tmp.data = wcsdup(buffer);
+                        tmp.fileNum = min.fileNum;
+
+                        if(numerical) {
+                            tmp.key = wcstol(data, &buffer, 10);
+                        } else {
+                            if(case_insensitive) sprintf(hex, "%04x", TOLOWER(wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]));
+                            else sprintf(hex, "%04x", wcsstr(buffer, keyPat)[wcslen(keyPat) + 1]);
+                            tmp.key = hex2dec(hex);
+                        }
+
+                        Insert(tmp);
+                        free(tmp.data);
+                    }
+
+                    wcscpy(buffer, L"");
+                    break;
+                } else {
+                    buffer = wcscat_m(buffer, line);
+                }
+            }
+
+            if(end_of_file) {
+                tmp.data = wcsdup(L"");
+                tmp.key = INT_MAX;
+                tmp.fileNum = min.fileNum;
+                Insert(tmp);
+            }
+
+            if(min.key == INT_MAX) break;
+        }
+        
+
+        for(int i=0; i<counter; i++) 
+            fclose(in[i]);
+
+        fclose(inFile);
+        fclose(outFile);
+
     } else {
         rows = malloc(sizeof(ROW) * 100000);
         while(fgetws(line, BUFFER_SIZE, inFile) != NULL) {
