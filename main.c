@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
     }
 
     FILE* inFile;
-    FILE* outFile;
     if(argc > 1)
         inFile = fopen(argv[argc - 1], "r");
     else
@@ -37,7 +36,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    outFile = fopen(strcat(argv[argc - 1], ".out"), "w");
     
     int counter = 0;
     int reverse = 0;
@@ -88,7 +86,6 @@ int main(int argc, char *argv[]) {
 
     if(strcmp(algorithm, "external_merge_sort") == 0) {
         int partition_size = 3000000, more_input = 1, next = 0;
-        FILE* outFile = fopen(strcat(argv[argc - 1], ".out"), "w");
         char fileName[7];
         int counter=0;
         rows = malloc(partition_size * sizeof(ROW));
@@ -145,7 +142,7 @@ int main(int argc, char *argv[]) {
             counter++;
         }
 
-
+        
     } else {
         rows = malloc(sizeof(ROW) * 100000);
         while(fgetws(line, BUFFER_SIZE, inFile) != NULL) {
