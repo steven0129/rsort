@@ -11,7 +11,7 @@
 
 #define __wcscasecmp wcscasecmp
 #define TOLOWER(Ch) towlower (Ch)
-#define CHUNK_SIZE 1024 * 1024
+#define CHUNK_SIZE 1024 * 1024 * 1024
 
 long int fileLen(FILE*);
 
@@ -47,8 +47,8 @@ int main(int argc, char* argv[]) {
         for(counter = 0;; counter++) {
             char hex[9];
             int dec;
-            rows[counter].data = malloc((strlen(chunk) + 10) * sizeof(char));
-            strcpy(rows[counter].data, chunk);
+            rows[counter].data = malloc(5000 * sizeof(char));
+            strncpy(rows[counter].data, chunk, 5000 * sizeof(char));
             
             if(strstr(rows[counter].data + strlen(BEGIN), BEGIN) == NULL) {
                 counter--;
