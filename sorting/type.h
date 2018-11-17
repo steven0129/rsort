@@ -2,9 +2,9 @@
 #define TYPE_H
 
 typedef struct {
-    int key;
+    unsigned int key;
     int fileNum;
-    wchar_t* data;
+    char* data;
 } ROW;
 
 #endif
