@@ -11,7 +11,7 @@
 
 #define __wcscasecmp wcscasecmp
 #define TOLOWER(Ch) towlower (Ch)
-#define CHUNK_SIZE 1024
+#define CHUNK_SIZE 1024 * 1024
 
 long int fileLen(FILE*);
 
@@ -24,7 +24,6 @@ int main(int argc, char* argv[]) {
     FILE* inFile;
     FILE* outFile;
     int fileNum = 0;
-    
     char* BEGIN = "@\n@url";
     char* KEY_PAT = "@content:";
     
@@ -44,11 +43,12 @@ int main(int argc, char* argv[]) {
         ROW* rows = (ROW*)malloc(sizeof(char) * (CHUNK_SIZE + 10) + sizeof(int) * (CHUNK_SIZE + 10) * 2);
         fseek(inFile, fp, SEEK_SET);
         fread(chunk, sizeof(char), CHUNK_SIZE, inFile);
-        
-        for(int counter = 0;; counter++) {
+        int counter;
+        for(counter = 0;; counter++) {
             char hex[9];
             int dec;
-            rows[counter].data = strdup(chunk);
+            rows[counter].data = malloc((strlen(chunk) + 10) * sizeof(char));
+            strcpy(rows[counter].data, chunk);
             
             if(strstr(rows[counter].data + strlen(BEGIN), BEGIN) == NULL) {
                 counter--;
@@ -61,7 +61,8 @@ int main(int argc, char* argv[]) {
             dec = hex2dec(hex);
             rows[counter].key = dec;
             rows[counter].fileNum = fileNum;
-            chunk = strdup(strstr(chunk + strlen(BEGIN), BEGIN));
+            strcpy(chunk, strstr(chunk + strlen(BEGIN), BEGIN));
+            free(rows[counter].data);
         }
 
         free(chunk);
