@@ -11,8 +11,6 @@
 
 #define __wcscasecmp wcscasecmp
 #define TOLOWER(Ch) towlower (Ch)
-#define CHUNK_SIZE 1024 * 1024 * 1024
-
 long int fileLen(FILE*);
 
 int main(int argc, char* argv[]) {
@@ -23,9 +21,10 @@ int main(int argc, char* argv[]) {
 
     FILE* inFile;
     FILE* outFile;
-    int fileNum = 0;
+    int fileNum = 0, reverse = 0;
     char* BEGIN = "@\n@url";
     char* KEY_PAT = "@content:";
+    unsigned long long int CHUNK_SIZE = 1 << 20;
     
     if(argc > 1)
         inFile = fopen(argv[argc - 1], "r");
@@ -52,6 +51,7 @@ int main(int argc, char* argv[]) {
             
             if(strstr(rows[counter].data + strlen(BEGIN), BEGIN) == NULL) {
                 counter--;
+                quick_sort(rows, 0, counter - 1, reverse);
                 break;
             }
 
@@ -62,11 +62,19 @@ int main(int argc, char* argv[]) {
             rows[counter].key = dec;
             rows[counter].fileNum = fileNum;
             strcpy(chunk, strstr(chunk + strlen(BEGIN), BEGIN));
-            free(rows[counter].data);
+        }
+
+        char tmpName[30];
+        sprintf(tmpName, "temp%d", fileNum);
+        FILE* tmp = fopen(tmpName, "w");
+        for(int i=0; i < counter; i++) {
+            fwrite(rows[i].data, sizeof(char), strlen(rows[i].data), tmp);
+            free(rows[i].data);
         }
 
         free(chunk);
         free(rows);
+        fclose(tmp);
     }
     
 

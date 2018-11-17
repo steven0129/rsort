@@ -4,3 +4,4 @@
 *.out
 perf.data*
 *.log
+temp*

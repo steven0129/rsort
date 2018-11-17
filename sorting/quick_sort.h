@@ -2,10 +2,10 @@
 #define QUICK_SORT_H
 #include"type.h"
 
-int partition (ROW*, int, int, int);
-void quick_sort(ROW*, int, int, int);
+unsigned int partition (ROW*, unsigned int, unsigned int, int);
+void quick_sort(ROW*, unsigned int, unsigned int, int);
 
-void quick_sort(ROW* arr, int low, int high, int reverse) { 
+void quick_sort(ROW* arr, unsigned int low, unsigned int high, int reverse) { 
     if (low < high) { 
         int pi = partition(arr, low, high, reverse); 
         quick_sort(arr, low, pi - 1, reverse);
@@ -13,7 +13,7 @@ void quick_sort(ROW* arr, int low, int high, int reverse) {
     }
 }
 
-int partition (ROW* arr, int low, int high, int reverse) { 
+unsigned int partition(ROW* arr, unsigned int low, unsigned int high, int reverse) { 
     int i = (low - 1);  // Index of smaller element 
   
     for (int j = low; j <= high- 1; j++) {
