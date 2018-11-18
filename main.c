@@ -14,7 +14,7 @@
 long int fileLen(FILE*);
 
 int main(int argc, char* argv[]) {
-    if (!setlocale(LC_CTYPE, "")) {
+    if (!setlocale(LC_ALL, "zh_TW.UTF-8")) {
         fprintf(stderr, "Error:Please check LANG, LC_CTYPE, LC_ALL.\n");
         return 1;
     }
@@ -65,10 +65,10 @@ int main(int argc, char* argv[]) {
         }
 
         char tmpName[30];
-        sprintf(tmpName, "temp%d", fileNum);
-        FILE* tmp = fopen(tmpName, "w");
+        sprintf(tmpName, "temp%d.rec", fileNum);
+        FILE* tmp = fopen(tmpName, "wb");
         for(int i=0; i < counter; i++) {
-            fwrite(rows[i].data, sizeof(char), strlen(rows[i].data), tmp);
+            fprintf(tmp, "%s", rows[i].data);
             free(rows[i].data);
         }
 
