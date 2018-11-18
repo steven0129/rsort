@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     int fileNum = 0, reverse = 0;
     char* BEGIN = "@\n@url";
     char* KEY_PAT = "@content:";
-    unsigned long long int CHUNK_SIZE = 1 << 20;
+    unsigned long long int CHUNK_SIZE = 1 << 30;
     
     if(argc > 1)
         inFile = fopen(argv[argc - 1], "r");
@@ -38,16 +38,16 @@ int main(int argc, char* argv[]) {
 
     for(long int fp = 0; fp < fileLen(inFile); fileNum++) {
         printf("%d\n", fileNum);
-        char* chunk = (char*)malloc(sizeof(char) * CHUNK_SIZE);
-        ROW* rows = (ROW*)malloc(sizeof(char) * (CHUNK_SIZE + 10) + sizeof(int) * (CHUNK_SIZE + 10) * 2);
+        char* chunk = (char*)malloc(CHUNK_SIZE);
+        ROW* rows = (ROW*)malloc(sizeof(char));
         fseek(inFile, fp, SEEK_SET);
         fread(chunk, sizeof(char), CHUNK_SIZE, inFile);
         int counter;
         for(counter = 0;; counter++) {
             char hex[9];
             int dec;
-            rows[counter].data = malloc(5000 * sizeof(char));
-            strncpy(rows[counter].data, chunk, 5000 * sizeof(char));
+            rows[counter].data = malloc(1000 * sizeof(char));
+            snprintf(rows[counter].data, 1000 * sizeof(char), "%s", chunk);
             
             if(strstr(rows[counter].data + strlen(BEGIN), BEGIN) == NULL) {
                 counter--;
